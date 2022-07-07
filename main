@@ -69,12 +69,12 @@ async def on_message(message):
 
     if message.content == '!frase':
         fraseAMostrar=f.MostrarFraseRandom()
+        channel= message.channel
         now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")   
-        emoji = '\N{PACKAGE}'      
-        await message.add_reaction(emoji)        
+        current_time = now.strftime("%H:%M:%S")         
         await message.channel.send((fraseAMostrar[5:]).capitalize())
         print(current_time+"->"+" "+fraseAMostrar)
+        await message.delete()
     
     elif "boa n" in message.content.lower():
         await message.channel.send("Boa noite o &$%")  
@@ -83,54 +83,59 @@ async def on_message(message):
         await message.channel.send("Eu?")
 
     elif "!roast" in message.content.lower(): 
-        channel = client.get_channel(992825262205046918) 
-        await channel.purge(limit=1)
+        channel= message.channel        
         roast=f.MostrarRandomRoast()
         if message.mentions:
           userx=message.mentions[0].id
-          userMentioned = await client.fetch_user(userx)          
+          userMentioned = await client.fetch_user(userx)           
           await message.channel.send("Ai aiiii!! "+message.author.display_name+" disse:'"+roast+"' "+userMentioned.mention)
+          await message.delete()
         else:
           await message.channel.send(message.author.mention+" "+roast)
-    
+          await message.delete()
+          
     elif "!elogio" in message.content.lower(): 
-        channel = client.get_channel(992825262205046918) 
-        await channel.purge(limit=1)
+        channel= message.channel        
         elogio=f.MostrarRandomElogio()
         if message.mentions:
             userx=message.mentions[0].id
-            userMentioned = await client.fetch_user(userx)
+            userMentioned = await client.fetch_user(userx)            
             await message.channel.send("Ai aiiii!! "+message.author.display_name+" disse:'"+elogio+"' "+userMentioned.mention)
-        else:  
+            await message.delete()
+        else:              
             await message.channel.send(message.author.mention+" "+elogio)
+            await message.delete()
     
     elif "!dm" in message.content.lower():
-        dmMessage=f.MostrarFraseDM
+        channel= message.channel      
+        dmMessage=f.MostrarFraseDM()        
         await message.author.send(dmMessage)
+        await message.delete()
     
     elif "!sugestao" in message.content.lower():
         channeltosend = client.get_channel(994404469389414500)
-        channeltoerase = client.get_channel(992825262205046918)
+        channeltoerase = message.channel
         await channeltosend.send(message.content)
-        await channeltoerase.purge(limit=1)
+        await message.delete()
 
     elif "!ajuda" in message.content.lower():
         ajuda= f.MostrarFraseAjuda()
         await message.author.send(ajuda)
-    
+        await message.delete()
+      
     elif "!ditado" in message.content.lower():
         channeltoerase = client.get_channel(992825262205046918)
         ditado=f.MostrarRandomDitado()
-        await channeltoerase.purge(limit=1)  
-        await message.channel.send(ditado)
+        await message.channel.send(ditado)      
+        await message.delete()  
       
     elif "!bomdia" in message.content.lower():
-        channeltoerase = client.get_channel(992825262205046918)
-        bomdia=f.MostrarRespostaBomDia()
-        await channeltoerase.purge(limit=1)  
+        channeltoerase= message.channel
+        bomdia=f.MostrarRespostaBomDia()         
         await message.channel.send(bomdia)
+        await message.delete() 
 
-@tasks.loop(seconds=300)
+@tasks.loop(seconds=500)
 async def mytask():
   channel = client.get_channel(993605157248041081)
   logtime2=datetime.now(pytz.timezone("Europe/London"))
@@ -139,15 +144,17 @@ async def mytask():
   
   await channel.send(". "+time2)
   
-  x=random.choice(range(0,2))
+  x=f.MostrarEstadoBot()['x']
+  
+  
   if x==0:
-      estadobot=f.MostrarEstadoBot()
+      estadobot=f.MostrarEstadoBot()['str']
       await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=estadobot))
   elif x==1:
-      estadobot=f.MostrarEstadoBot()
+      estadobot=f.MostrarEstadoBot()['str']
       await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=estadobot))
   else:
-      estadobot=f.MostrarEstadoBot()
+      estadobot=f.MostrarEstadoBot()['str']
       await client.change_presence(activity=discord.Game(estadobot))
 
       
