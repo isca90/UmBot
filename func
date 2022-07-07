@@ -111,9 +111,17 @@ def MostrarEstadoBot():
 
     x=random.choice(range(0,2))
     if x==0:
-      return random.choice(watch)
+        d = dict()
+        d['str'] = random.choice(watch)
+        d['x']   = x
+        return d
     if x==1:
-      return random.choice(listen)
+        i = dict()
+        i['str'] = random.choice(listen)
+        i['x']   = x
+        return i
     else:
-      return random.choice(playing)
-    
+        c = dict()
+        c['str'] = random.choice(playing)
+        c['x']   = x
+        return c
