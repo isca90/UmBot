@@ -69,7 +69,6 @@ async def on_message(message):
 
     if message.content == '!frase':
         fraseAMostrar=f.MostrarFraseRandom()
-        channel= message.channel
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")         
         await message.channel.send((fraseAMostrar[5:]).capitalize())
@@ -82,8 +81,7 @@ async def on_message(message):
     elif "bot" in message.content.lower():
         await message.channel.send("Eu?")
 
-    elif "!roast" in message.content.lower(): 
-        channel= message.channel        
+    elif "!roast" in message.content.lower():     
         roast=f.MostrarRandomRoast()
         if message.mentions:
           userx=message.mentions[0].id
@@ -94,8 +92,7 @@ async def on_message(message):
           await message.channel.send(message.author.mention+" "+roast)
           await message.delete()
           
-    elif "!elogio" in message.content.lower(): 
-        channel= message.channel        
+    elif "!elogio" in message.content.lower():   
         elogio=f.MostrarRandomElogio()
         if message.mentions:
             userx=message.mentions[0].id
@@ -106,8 +103,7 @@ async def on_message(message):
             await message.channel.send(message.author.mention+" "+elogio)
             await message.delete()
     
-    elif "!dm" in message.content.lower():
-        channel= message.channel      
+    elif "!dm" in message.content.lower(): 
         dmMessage=f.MostrarFraseDM()        
         await message.author.send(dmMessage)
         await message.delete()
@@ -124,13 +120,11 @@ async def on_message(message):
         await message.delete()
       
     elif "!ditado" in message.content.lower():
-        channeltoerase = client.get_channel(992825262205046918)
         ditado=f.MostrarRandomDitado()
         await message.channel.send(ditado)      
         await message.delete()  
       
     elif "!bomdia" in message.content.lower():
-        channeltoerase= message.channel
         bomdia=f.MostrarRespostaBomDia()         
         await message.channel.send(bomdia)
         await message.delete() 
