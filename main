@@ -1,14 +1,16 @@
 # bot.py
 import os
-import random
 import discord
-from datetime import datetime
-from keep_alive import keep_alive
-from dotenv import load_dotenv
 from discord.ext import tasks,commands
+from datetime import datetime
+from dotenv import load_dotenv
 import pytz
 from discord.utils import get
 import func as f
+from keep_alive import keep_alive
+
+from os import system
+system('pip install Pillow')
 
 load_dotenv()
 
@@ -22,7 +24,7 @@ time = logtime.strftime("%H:%M")
 
 
 @client.event
-async def on_ready():
+async def on_ready():  
   print(f'{client.user.name} has connected to Discord!')
   mytask.start()
   channel = client.get_channel(993605157248041081)
@@ -32,35 +34,56 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel(993684488410386563)
+    channel = client.get_channel(994691913955430526)
     roleNewPplo=get(member.guild.roles, id=994449061052698624)
     await member.add_roles(roleNewPplo)
-    await channel.send(f"""
-______________________________________________________________
-Olá {member.display_name}! 
-Para teres acesso ao canal por favor lê com atenção as regras abaixo
+    desc=f"Olá{member.mention}!Bem-vindo!"
+    regras="""
 Regra random1 -- basdpqwodkas
 Regra random2 -- basdpqwodkas
 Regra random3 -- basdpqwodkas
 Regra random4 -- para saber os comandos bot escreve !ajuda ou !dm
-______________________________________________________________
-Se concordas reage com 👍
-                       """)
+ """
+    comandos="""
+!roast (podes mencionar alguem.ex !roast @user)--ridiculariza gravemente alguém ou a ti mesmo
+!elogio(podes elogiar alguem.ex !elogio @user)--elogia  alguém ou a ti mesmo
+!frase--o bot mostra-te uma frase linda
+!sugestao--encaminha reports, sugestões, ou mensagens diretamente aos admin do canal
+!dm--recebe uma dm do bot para falarem em privado
+!ditado--o bot mostra um ditado adaptado a >18
+!bomdia--o bot reage ao teu bom dia"""
+    embedVar = discord.Embed(title="Regras", description=desc, color=0x00ff00)
+    embedVar.add_field(name="Regras", value=regras, inline=False)
+    embedVar.add_field(name="Comandos", value=comandos, inline=False)
+    await channel.send(embed=embedVar)
+
+    
 
 @client.event
 async def on_reaction_add(reaction, member):
-    channel = client.get_channel(993684488410386563)
-    roleAfter=get(member.guild.roles, id=994352546204373032)
-    if member.guild.roles==994449061052698624:
-        await member.add_roles(roleAfter)
-        await channel.send('Ai olha para mim, sou o '+{member.mention})
+    sin = client.get_channel(993684488410386563) 
+    svalidacao= client.get_channel(994691913955430526) 
+    
+    roleNewPplo=get(member.guild.roles, id=994449061052698624)
+    roleMain=get(member.guild.roles, id=994352546204373032)
+    
+    if roleNewPplo in member.roles:
+        await member.remove_roles(roleNewPplo)
+        await member.add_roles(roleMain)
+        await sin.send(f'Olá '+member.mention)
+        await svalidacao.purge(limit=10)
+        
+        f.PontosOnJoin(member)
+        
 
 
 @client.event
 async def on_member_remove(member):
     channel = client.get_channel(993684543041191966) 
     await channel.send(f'Tenho de abandonar que tenho uma consulta às cinco - diz  {member.mention}')
-
+    f.PontosOnQuit(member)
+    
+    
   
 @client.event
 async def on_message(message):
@@ -71,10 +94,11 @@ async def on_message(message):
         fraseAMostrar=f.MostrarFraseRandom()
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")         
-        await message.channel.send((fraseAMostrar[5:]).capitalize())
+        await message.channel.send("toma "+message.author.mention+":\n"+(fraseAMostrar[5:]).capitalize())
         print(current_time+"->"+" "+fraseAMostrar)
         await message.delete()
-    
+        f.RemoverPontos(message.author)
+      
     elif "boa n" in message.content.lower():
         await message.channel.send("Boa noite o &$%")  
 
@@ -91,6 +115,7 @@ async def on_message(message):
         else:
           await message.channel.send(message.author.mention+" "+roast)
           await message.delete()
+        f.RemoverPontos(message.author)
           
     elif "!elogio" in message.content.lower():   
         elogio=f.MostrarRandomElogio()
@@ -102,6 +127,7 @@ async def on_message(message):
         else:              
             await message.channel.send(message.author.mention+" "+elogio)
             await message.delete()
+        f.RemoverPontos(message.author)
     
     elif "!dm" in message.content.lower(): 
         dmMessage=f.MostrarFraseDM()        
@@ -110,25 +136,43 @@ async def on_message(message):
     
     elif "!sugestao" in message.content.lower():
         channeltosend = client.get_channel(994404469389414500)
-        channeltoerase = message.channel
         await channeltosend.send(message.content)
         await message.delete()
+      
 
     elif "!ajuda" in message.content.lower():
         ajuda= f.MostrarFraseAjuda()
         await message.author.send(ajuda)
         await message.delete()
+        f.RemoverPontos(message.author)
       
     elif "!ditado" in message.content.lower():
         ditado=f.MostrarRandomDitado()
-        await message.channel.send(ditado)      
+        await message.channel.send("toma "+message.author.mention+":\n"+ditado)      
         await message.delete()  
+        f.RemoverPontos(message.author)
       
     elif "!bomdia" in message.content.lower():
         bomdia=f.MostrarRespostaBomDia()         
-        await message.channel.send(bomdia)
+        await message.channel.send("toma "+message.author.mention+":\n"+bomdia)
         await message.delete() 
+        f.RemoverPontos(message.author)
+      
+    elif "!apagar" in message.content.lower():
+        await message.channel.purge(limit=1000000)
 
+      
+    elif "!pontos" in message.content.lower():
+        pontos= f.MostrarPontos(message.author)
+        nivel= f.MostrarNivel(message.author)
+        embedVar = discord.Embed(title="Pontuação", description="", color=0x2596be)
+        embedVar.add_field(name=f"Parabéns {message.author.display_name}!", value=f"Já tens {pontos} pontos\nEstás no nível {nivel}.", inline=False)
+        embedVar.set_thumbnail(url=message.author.avatar_url)
+        await message.channel.send(embed=embedVar)
+      
+    else:
+        f.AdicionarPontos(message.author)
+      
 @tasks.loop(seconds=500)
 async def mytask():
   channel = client.get_channel(993605157248041081)
@@ -137,6 +181,7 @@ async def mytask():
   await channel.purge(limit=1)
   
   await channel.send(". "+time2)
+  
   
   x=f.MostrarEstadoBot()['x']
   
