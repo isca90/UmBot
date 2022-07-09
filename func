@@ -1,6 +1,7 @@
 import random
-import discord
 from datetime import datetime
+import discord
+import json
 
 
 def MostrarFraseRandom():
@@ -73,7 +74,7 @@ def MostrarRandomRoast():
     return random.choice(randomRoast).capitalize()
 
 def MostrarRandomDitado():
-    randomDitado=["Gato escaldado debaixo dos lençois tem medo de água fria entre as pernas","Não existe rosa debaixo dos lençois sem espinho entre as pernas"]
+    randomDitado=["Gato escaldado debaixo dos lençóis tem medo de água fria entre as pernas","Não existe rosa debaixo dos lençóis sem espinho entre as pernas","Amigos, amigos debaixo dos lençóis, negócios à parte entre as pernas","Um olho no peixe debaixo dos lençóis,outro no gato entre as pernas","Deus tem mais para dar debaixo dos lençóis, do que o diabo para tirar entre as pernas","O seguro debaixo dos lençóis, morreu de velho entre as pernas","O preguiçoso debaixo dos lençóis, trabalha dobrado entre as pernas","Quem não quer ser lobo debaixo dos lençóis, não lhe vista a pele entre as pernas","Em terra de cego debaixo dos lençios, quem tem um olho é rei entre as pernas","Um dia da caça debaixo dos lençóis, outro do caçador entre as pernas","Não adianta chorar debaixo dos lençóis, sobre leite derramado entre as pernas","Águas passadas debaixo dos lençóis, não movem moinho entre as pernas","O pior cego debaixo dos lençóis, é aquele que não quer ver entre as pernas","Apressado debaixo dos lençis, come cru entre as pernas","O comer e o coçar debaixo dos lençóis, o mal é começar entre as pernas","O que aperta debaixo dos lençóis, segura entre as pernas","O que arde debaixo dos lençóis, cura entre as pernas","Plantar verde debaixo dos lençóis, para colher maduro entre as pernas","Quem ri por último debaixo dos lençóis, ri melhor entre as pernas","Filhos criados debaixo dos lençóis, trabalhos dobrados entre as pernas","À noite debaixo dos lençóis, todos os gatos são pardos entre as pernas","Depois da batalha debaixo dos lençóis, aparecem os valentes entre as pernas","Não adianta lamentar debaixo dos lençóis, a morte da bezerra entre as pernas","Deus ajuda debaixo dos lençóis, quem cedo madruga entre as pernas","Entre marido e mulher debaixo dos lençóis, não se mete a colher entre as pernas","A esperança debaixo dos lençóis, é a última a morrer entre as pernas","De boas intenções debaixo dos lençóis, está o inferno cheio entre as pernas","Em casa de ferreiro debaixo dos lençóis, espeto de pau entre as pernas","Quando um não quer debaixo dos lençóis, dois não brigam entre as pernas","Os últimos debaixo dos lençóis, são os primeiros entre as pernas","Se ferradura trouxesse sorte debaixo dos lençóis, burro não puxava carroça entre as pernas","Manda quem pode debaixo dos lençóis, obedece quem tem juízo entre as pernas","Pau que nasce torto debaixo dos lençóis, nunca se endireita entre as pernas","O homem é senhor do que pensa debaixo dos lençóis, e escravo do que fala entre as pernas","A água de janeiro debaixo dos lençóis, vale dinheiro entre as pernas","Quando não chove em fevereiro debaixo dos lençóis, nem bom prado nem bom celeiro entre as pernas","Em março debaixo dos lençóis, tanto durmo como faço entre as pernas","Em abril debaixo dos lençóis, águas mil entre as pernas","Peixe de maio debaixo dos lençóis, a quem vo-lo pedir dai-o entre as pernas","Chuva de julho debaixo dos lençóis, que não faça barulho entre as pernas","Em dia de São Martinho debaixo dos lençóis, lume, castanhas e vinho entre as pernas","Quem vai à guerra debaixo dos lençóis, dá e leva entre as pernas","Quem parte e reparte e não fica com a melhor parte debaixo dos lençóis, ou é tolo ou não tem arte entre as pernas","Quem vai ao ar debaixo dos lençóis, perde o lugar entre as pernas","Quem vai ao vento debaixo dos lençóis, perde o assento entre as pernas","Quem não aparece  esquece debaixo dos lençóis, mas quem muito aparece, tanto lembra que aborrece entre as pernas","Quem casa debaixo dos lençóis, quer casa entre as pernas","Quem diz as verdades debaixo dos lençóis, perde as amizades entre as pernas","Quem se mete em atalhos debaixo dos lençóis, mete-se em trabalhos entre as pernas","Quem não deve debaixo dos lençóis, não teme entre as pernas","Quem conta um conto debaixo dos lençóis, acrescenta-lhe um ponto entre as pernas","Quem canta debaixo dos lençóis, seus males espanta entre as pernas","Quem não arrisca debaixo dos lençóis, não petisca entre as pernas","Quem o alheio veste debaixo dos lençóis, na praça o despe entre as pernas","Quem tem capa debaixo dos lençóis, sempre escapa emtre as pernas","Quem tem telhados de vidro debaixo dos lençóis, não atira pedras entre as pernas","Quem sai aos seus debaixo dos lençóis, não degenera entre as pernas","Quem semeia ventos debaixo dos lençóis, colhe tempestades entre as pernas","Quem vê caras debaixo dos lençóis, não vê corações entre as pernas","Quem corre por gosto debaixo dos lençóis, não cansa entre as pernas","Quem muito fala debaixo dos lençóis, pouco acerta entre as perna","Quem cala debaixo dos lençóis, consente entre as perna","Quem mais jura debaixo dos lençóis, é quem mais mente entre as perna","Quem não tem cão debaixo dos lençóis, caça com gato entre as pernas","Quem te avisa debaixo dos lençóis, teu amigo é entre as pernas","Quem não chora debaixo dos lençóis, não mama entre as pernas","Quem desdenha debaixo dos lençóis, quer comprar entre as pernas","Quem tem boca debaixo dos lençóis, vai a Roma entre as pernas","Quem brinca com o fogo debaixo dos lençóis, queima-se entre as pernas","Quem muito escolhe debaixo dos lençóis, pouco acerta entre as pernas","Quem bem nada debaixo dos lençóis, não se afoga entre as pernas","Quem não tem dinheiro debaixo dos lençóis, não tem vícios entre as pernas","Quem paga adiantado debaixo dos lençóis,é mal servido entre as pernas","Quem parte velho debaixo dos lençóis, paga novo entre as pernas","Quem sabe faz debaixo dos lençõis, quem não sabe ensina entre as pernas","Quem nasce torto debaixo dos lençóis, tarde ou nunca se endireita entre as pernas","Quem tudo quer debaixo dos lençóis, tudo perde entre as pernas","Quem é vivo debaixo dos lençóis, sempre aparece entre as pernas","Santos da casa debaixo dos lençóis, não fazem milagres entre as pernas","Toda brincadeira debaixo dos lençóis, tem um pouco de verdade entre as pernas","Todo o homem debaixo dos lençóis, tem o seu preço entre as pernas","Vão-se os anéis debaixo dos lençóis, ficam-se os dedos entre as pernas","Zangam-se as comadres debaixo dos lençóis, descobrem-se as verdades entre as pernas","Vozes de burro debaixo dos lençóis, não chegam ao céu entre as pernas","Depressa e bem debaixo dos lençóis, não há quem entre as pernas","De grão a grão debaixo dos lençóis, enche a galinha o papo entre as pernas","Diz-me com quem andas debaixo dos lençóis, dir-te-ei quem és entre as pernas","Deitar cedo e cedo erguer debaixo dos lençóis, dá saúde e faz crescer entre as pernas","Cada qual debaixo dos lençóis, é para o que nasce entre as pernas","Criou a fama debaixo dos lençóis, deite-se na cama entre as pernas","Até ao lavar dos cestos  debaixo dos lençóis, é vindima entre as pernas","Recordar debaixo dos lençóis, é viver entre as pernas","Querer debaixo dos lençóis, é poder entre as pernas","Uma mão debaixo dos lençóis, lava a outra entre as pernas","Uma desgraça debaixo dos lençóis, nunca vem só entre as pernas","Devagar debaixo dos lençóis, se vai ao longe entre as pernas","De pequenino debaixo dos lençóis, é que se torce o pepino entre as pernas","Enquanto há vida debaixo dos lençóis, há esperança entre as pernas","Cão que ladra debaixo dos lençóis, não morde entre as pernas","Cada panela debaixo dos lençóis, tem a sua tampa entre as pernas","Cada macaco debaixo dos lençóis, no seu galho entre as pernas","A pressa debaixo dos lençóis, é inimiga da perfeição entre as pernas","Amigo debaixo dos lençóis, não empata amigo entre as pernas","Água mole em pedra dura debaixo dos lençóis, tanto dá até que fura entre as pernas","A união debaixo dos lençóis, faz a força entre as pernas","A ocasião debaixo dos lençóis, faz o ladrão entre as pernas","A ignorância debaixo dos lençóis, é a mãe de todas as doenças entre as pernas","Amigo do meu amigo debaixo dos lençóis, meus amigos são entre as pernas","A cavalo dado debaixo dos lençóis, não se olha a dente entre as pernas","Antes só debaixo dos lençóis, do que mal acompanhado entre as pernas","A pobre não prometas debaixo dos lençóis, e a rico não devas entre as pernas","A mulher e a sardinha debaixo dos lençóis, querem-se da mais pequenina entre as pernas","A boda e a baptizado debaixo dos lençois, não vás sem ser convidado entre as pernas","A galinha do vizinho debaixo dos lençóis, é sempre melhor que a minha entre as pernas","A laranja de manhã é ouro debaixo dos lençóis, à tarde é prata e à noite mata entre as pernas","A necessidade debaixo dos lençóis, aguça o engenho entre as pernas","A noite debaixo dos lençóis, é boa conselheira entre as pernas","A palavra é de prata debaixo dos lençóis, e o silêncio é de ouro entre as pernas","A pensar debaixo dos lençóis, morreu um burro entre as pernas","A roupa suja debaixo dos lençóis, lava-se em casa entre as pernas","Antes tarde debaixo dos lençóis, do que nunca entre as pernas","Boi velho debaixo dos lençóis, gosta de erva tenra entre as pernas","Boda molhada debaixo dos lençóis, boda abençoada entre as pernas","Burro velho debaixo dos lençóis, não aprende línguas entre as pernas","Cada cabeça debaixo dos lençóis, sua sentença entre as pernas","Com vinagre debaixo dos lençóis, não se apanham moscas entre as pernas","Coma para viver debaixo dos lençóis, não viva para comer entre as pernas","Cada um debaixo dos lençóis, sabe as linhas com se cose entre as pernas","Cada um sabe de si debaixo dos lençóis, e Deus sabe de todos entre as pernas","Cautela e caldos de galinha debaixo dos lençois, nunca fizeram mal a ninguém entre as pernas","Com a verdade debaixo dos lençois, me enganas entre as pernas","Com papas e bolos debaixo dos lençois, se enganam os tolos entre as pernas","De Espanha debaixo dos lençóis, nem bom vento nem bom casamento entre as pernas","De poeta e de louco debaixo dos lençóis, todos temos um pouco entre as pernas","Depois da tempestade debaixo dos lençóis, vem a bonança entre as pernas","Em casa onde não há pão debaixo dos lençóis, todos ralham e ninguém tem razão entre as pernas","Em tempo de guerra debaixo dos lençóis, não se limpam armas entre as pernas","Filho de peixe debaixo dos lençóis, sabe nadar entre as pernas","Gaivotas em terra debaixo dos lençóis, tempestade no mar entre as pernas","Homem prevenido debaixo dos lençóis, vale por dois entre as pernas","Há males debaixo dos lençóis, que vêm por bem entre as pernas","Homem pequenino debaixo dos lençóis, ou velhaco ou dançarino entre as pernas","Junta-te aos bons, serás como eles debaixo dos lençóis, junta-te aos maus, serás pior do que eles entre as pernas","Ladrão que rouba a ladrão debaixo dos lençóis, tem cem anos de perdão entre as pernas","Longe da vista debaixo dos lençóis, longe do coração entre as pernas","Mais vale um pássaro na mão debaixo dos lençóis, do que dois a voar entre as pernas","Mãos frias debaixo dos lençóis, coração quente entre as pernas","Mais vale cair em graça debaixo dos lençóis, do que ser engraçado entre as pernas","Mais depressa se apanha um mentiroso debaixo dos lençóis, que um coxo entre as pernas","Madruga e verás debaixo dos lençóis, trabalha e terás entre as pernas","Mais vale um pé no travão debaixo dos lençóis, que dois no caixão entre as pernas","Mais vale uma palavra antes debaixo dos lençóis, que duas depois entre as pernas","Mais vale prevenir debaixo dos lençóis, que remediar entre as pernas","Muita parra debaixo dos lençóis, pouca uva entre as pernas","Muito alcança debaixo dos lençóis, quem não se cansa entre as pernas","Muito riso debaixo dos lençóis, pouco siso entre as pernas","Não há mal que sempre dure debaixo dos lençóis, nem bem que não se acabe entre as pernas","Nem tudo o que reluz debaixo dos lençóis, é ouro entre as pernas","Não há bela debaixo dos lençóis, sem senão entre as pernas","Nem tanto ao mar debaixo dos lençóis, nem tanto à terra entre as pernas","Não há fome debaixo dos lençóis, que não dê em fartura entre as pernas","Não vendas a pele do urso debaixo dos lençóis, antes de o matar entre as pernas","Não há duas debaixo dos lençóis, sem três entre as pernas","No meio debaixo dos lençóis, é que está a virtude entre as pernas","Nem oito debaixo dos lençóis, nem oitenta entre as pernas","Nem tudo o que vem à rede debaixo dos lençóis, é peixe entre as pernas","No aperto e no perigo debaixo dos lençóis, se conhece o amigo entre as pernas","No poupar debaixo dos lençóis, é que está o ganho entre as pernas","Não dá quem tem debaixo dos lençóis, dá quem quer bem entre as pernas","O saber debaixo dos lençóis, não ocupa lugar entre as pernas","Os cães ladram debaixo dos lençóis, e caravana passa entre as pernas","O prometido debaixo dos lençóis, é devido entre as pernas","O segredo debaixo dos lençóis, é a alma do negócio entre as pernas","O bom filho debaixo dos lençóis, à casa retorna entre as pernas","O que não tem remédio debaixo dos lençóis, remediado está entre as pernas","O óptimo debaixo dos lençóis, é inimigo do bom entre as pernas","Os amigos debaixo dos lençóis, são para as ocasiões entre as pernas","Os opostos debaixo dos lençóis, atraem-se entre as pernas","Os homens debaixo dos lençóis, não se medem aos palmos entre as pernas","Para bom entendedor debaixo dos lençóis, meia palavra basta entre as pernas","Por morrer uma andorinha debaixo dos lençóis, não acaba a primavera entre as pernas","Patrão fora debaixo dos lençóis, dia santo na loja entre as pernas","Para grandes males debaixo dos lençóis, grandes remédios entre as pernas"]
     return random.choice(randomDitado).capitalize()
 
 def MostrarRespostaBomDia():
@@ -84,13 +85,13 @@ def MostrarFraseDM():
   return """
   *Encosta tua cabecinha no meu ombro e chora e conta logo tuas magoas todas para mim*
                                     
-  !roast (podes mencionar alguem.ex !roast @user)-----------------ridiculariza gravemente alguém ou a ti mesmo
-  !elogio(podes elogiar alguem.ex !elogio @user)--------------------elogia  alguém ou a ti mesmo
-  !frase-------------------------------------------------------------------o bot mostra-te uma frase linda
-  !sugestao--------------------------------------------------------------encaminha reports, sugestões, ou mensagens diretamente aos admin do canal
-  !dm---------------------------------------------------------------------recebe uma dm do bot para falarem em privado
-  !ditado-----------------------------------------------------------------o bot mostra um ditado adaptado a >18
-  !bomdia----------------------------------------------------------------o bot reage ao teu bom dia
+  !roast (podes mencionar alguem.ex !roast @user)--ridiculariza gravemente alguém ou a ti mesmo
+  !elogio(podes elogiar alguem.ex !elogio @user)--elogia  alguém ou a ti mesmo
+  !frase--o bot mostra-te uma frase linda
+  !sugestao--encaminha reports, sugestões, ou mensagens diretamente aos admin do canal
+  !dm--recebe uma dm do bot para falarem em privado
+  !ditado--o bot mostra um ditado adaptado a >18
+  !bomdia--o bot reage ao teu bom dia
                                     """
 
 def MostrarFraseAjuda():
@@ -104,6 +105,7 @@ def MostrarFraseAjuda():
 !bomdia----------------------------------------------------------------o bot reage ao teu bom dia
           """
 
+  
 def MostrarEstadoBot():
     listen=["You","God","Your momma","Mr Jesus","8bit music","HAL9000","Britney Spears","Styx-MR.Roboto","Kraftwerk-The Robots","Daft Punk-Robot Rock","Radiohead-Paranoid Android","dial up modems connecting","Clutch-10001110101","The Network-Joe Robot"]
     watch=["Robot Monster","The robot dog","I, Robot ","Clash of the Titans","Teddy, A.I.","The Colossus of New York","Rogue One","Alien: Resurrection","Terminator 3","Starcrash","Tobor the Great","Prometheus","Robocop 3","The World’s End","Austin Powers: International Man of Mystery","Star Trek","Lost in Space","Total Recall","Devil Girl from Mars","Minority Report","Flash Gordon","The Earth Dies Screaming","The Matrix","The Last Starfighter","Ex Machina","West World","The Hitchhiker’s Guide to the Galaxy","Godzilla vs. Megalon","WALL·E","Blade Runner","Star Wars","Metropolis","The Wizard of Oz","2001 Space Odissey"]
@@ -125,3 +127,86 @@ def MostrarEstadoBot():
         c['str'] = random.choice(playing)
         c['x']   = x
         return c
+
+
+def MostrarNivel(member):
+    s=str(member.id)    
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)  
+    a_file.close()
+    if json_object[s] <100:
+      return "nível 1"
+    elif json_object[s] <=200:
+      return "nível 2"
+    elif json_object[s] <=1000:
+      return "nível 3"
+    elif json_object[s] <=10000:
+      return "nível 4"
+    elif json_object[s] <=50000:
+      return "nível 5"
+      
+
+  
+def PontosOnJoin(member):
+    id=str(member.id)
+  
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)
+    a_file. close()
+  
+    json_object[id] = 0
+    a_file = open("points.json", "w")
+    json.dump(json_object, a_file)
+    a_file.close()
+
+def PontosOnQuit(member):
+  
+    s=str(member.id)
+    
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)  
+    a_file.close()
+  
+    del json_object[s]
+  
+    a_file = open("points.json", "w")
+    json.dump(json_object, a_file)
+    a_file.close()
+
+def MostrarPontos(member):
+    s=str(member.id)    
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)  
+    a_file.close()
+    return json_object[s]
+
+def AdicionarPontos(member):
+    s=str(member.id)    
+  
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)  
+    a_file.close()
+  
+    json_object[s]+=10
+  
+    a_file = open("points.json", "w")
+    json.dump(json_object, a_file)
+    a_file.close()
+    return 
+
+def RemoverPontos(member):
+
+    s=str(member.id)    
+  
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)  
+    a_file.close()
+  
+    json_object[s]-=10
+  
+    a_file = open("points.json", "w")
+    json.dump(json_object, a_file)
+    a_file.close()
+    return 
+
+
