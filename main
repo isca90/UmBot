@@ -179,13 +179,10 @@ async def mytask():
   logtime2=datetime.now(pytz.timezone("Europe/London"))
   time2 = logtime2.strftime("%H:%M")
   await channel.purge(limit=1)
-  
   await channel.send(". "+time2)
-  
-  
+    
   x=f.MostrarEstadoBot()['x']
-  
-  
+    
   if x==0:
       estadobot=f.MostrarEstadoBot()['str']
       await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=estadobot))
