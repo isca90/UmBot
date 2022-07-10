@@ -135,15 +135,15 @@ def MostrarNivel(member):
     json_object = json.load(a_file)  
     a_file.close()
     if json_object[s] <100:
-      return "nível 1"
+      return "1"
     elif json_object[s] <=200:
-      return "nível 2"
+      return "2"
     elif json_object[s] <=1000:
-      return "nível 3"
+      return "3"
     elif json_object[s] <=10000:
-      return "nível 4"
+      return "4"
     elif json_object[s] <=50000:
-      return "nível 5"
+      return "5"
       
 
   
@@ -180,21 +180,21 @@ def MostrarPontos(member):
     a_file.close()
     return json_object[s]
 
-def AdicionarPontos(member):
+def AdicionarPontos(member,x):
     s=str(member.id)    
   
     a_file = open("points.json", "r")
     json_object = json.load(a_file)  
     a_file.close()
   
-    json_object[s]+=10
+    json_object[s]+=x
   
     a_file = open("points.json", "w")
     json.dump(json_object, a_file)
     a_file.close()
     return 
 
-def RemoverPontos(member):
+def RemoverPontos(member,x):
 
     s=str(member.id)    
   
@@ -202,11 +202,19 @@ def RemoverPontos(member):
     json_object = json.load(a_file)  
     a_file.close()
   
-    json_object[s]-=10
+    json_object[s]-=x
   
     a_file = open("points.json", "w")
     json.dump(json_object, a_file)
     a_file.close()
     return 
+
+def VerificarPontos(member):
+    s=str(member.id)
+    a_file = open("points.json", "r")
+    json_object = json.load(a_file)  
+    a_file.close()
+    pontos=json_object[s]
+    return pontos
 
 
