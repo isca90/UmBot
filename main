@@ -30,9 +30,11 @@ async def on_ready():
   await channel.send("erase me")
   await channel.send(f"```up: {time}```")
 
+  
 
 @client.event
 async def on_member_join(member):
+    
     channel = client.get_channel(994691913955430526)
     roleNewPplo=get(member.guild.roles, id=995770133068918975)
     await member.add_roles(roleNewPplo)
@@ -50,11 +52,15 @@ Regra random4 -- para saber os comandos bot escreve !ajuda ou !dm
 !sugestao--encaminha reports, sugestões, ou mensagens diretamente aos admin do canal
 !dm--recebe uma dm do bot para falarem em privado
 !ditado--o bot mostra um ditado adaptado a >18
-!bomdia--o bot reage ao teu bom dia"""
+!bomdia--o bot reage ao teu bom dia
+  
+Adiciona uma reação para ganhares acesso ao canal."""
     embedVar = discord.Embed(title="Regras", description=desc, color=0x00ff00)
     embedVar.add_field(name="Regras", value=regras, inline=False)
     embedVar.add_field(name="Comandos", value=comandos, inline=False)
     await channel.send(embed=embedVar)
+
+    
 
     
 
@@ -95,44 +101,58 @@ async def on_message(message):
     if message.channel not in guild.channels:
             await message.channel.send("nope")
     elif message.content == '!frase':
-         
-      fraseAMostrar=f.MostrarFraseRandom()
-      now = datetime.now()
-      current_time = now.strftime("%H:%M:%S")         
-      await message.channel.send("toma "+message.author.mention+f"```\n{(fraseAMostrar[5:]).capitalize()}```")
-      print(current_time+"->"+" "+fraseAMostrar)
-      await message.delete()
-      f.RemoverPontos(message.author)
-      
+      permissao = f.VerificarPontos(message.author)
+
+      if permissao>=10:  
+          fraseAMostrar=f.MostrarFraseRandom()
+          now = datetime.now()
+          current_time = now.strftime("%H:%M:%S")         
+          await message.channel.send("toma "+message.author.mention+f"```\n{(fraseAMostrar[5:]).capitalize()}```")
+          print(current_time+"->"+" "+fraseAMostrar)
+          await message.delete()
+          f.RemoverPontos(message.author,10)
+      else:
+          await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+        
     elif "boa n" in message.content.lower():
-        await message.channel.send("```Boa noite o &$%```")  
+        await message.channel.send("Boa noite o &$%")  
 
     elif "bot" in message.content.lower():
-        await message.channel.send("```Eu?```")
+        await message.channel.send("Eu?")
 
     elif "!roast" in message.content.lower():     
-        roast=f.MostrarRandomRoast()
-        if message.mentions:
-          userx=message.mentions[0].id
-          userMentioned = await client.fetch_user(userx)           
-          await message.channel.send(userMentioned.mention+f"```Ai aiiii!! {message.author.display_name} disse: '{roast}'```")
-          await message.delete()
+        permissao = f.VerificarPontos(message.author)
+
+        if permissao>10:
+            roast=f.MostrarRandomRoast()        
+            if message.mentions:
+              userx=message.mentions[0].id
+              userMentioned = await client.fetch_user(userx)           
+              await message.channel.send(userMentioned.mention+f"```Ai aiiii!! {message.author.display_name} disse: '{roast}'```")
+              await message.delete()
+            else:
+              await message.channel.send(message.author.mention+f"```{roast}```")
+              await message.delete()
+            f.RemoverPontos(message.author,10)
         else:
-          await message.channel.send(message.author.mention+f"```{roast}```")
-          await message.delete()
-        f.RemoverPontos(message.author)
-          
-    elif "!elogio" in message.content.lower():   
-        elogio=f.MostrarRandomElogio()
-        if message.mentions:
-            userx=message.mentions[0].id
-            userMentioned = await client.fetch_user(userx)            
-            await message.channel.send(userMentioned.mention+f"```Ai aiiii!! {message.author.display_name} disse:'{elogio}'```")
-            await message.delete()
-        else:              
-            await message.channel.send(message.author.mention+f"```elogio```")
-            await message.delete()
-        f.RemoverPontos(message.author)
+              await message.channel.send(message.author.mention+f"```Não tens pontos suficientes .Ganhas pontos a participar no chat```")
+            
+    elif "!elogio" in message.content.lower():  
+        permissao = f.VerificarPontos(message.author)
+
+        if permissao>=10:
+            elogio=f.MostrarRandomElogio()
+            if message.mentions:
+                userx=message.mentions[0].id
+                userMentioned = await client.fetch_user(userx)            
+                await message.channel.send(userMentioned.mention+f"```Ai aiiii!! {message.author.display_name} disse:'{elogio}'```")
+                await message.delete()
+            else:              
+                await message.channel.send(message.author.mention+f"```elogio```")
+                await message.delete()
+            f.RemoverPontos(message.author)
+        else:
+            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
     
     elif "!dm" in message.content.lower(): 
         dmMessage=f.MostrarFraseDM()        
@@ -143,6 +163,7 @@ async def on_message(message):
         channeltosend = client.get_channel(994404469389414500)
         await channeltosend.send(message.content)
         await message.delete()
+        f.AdicionarPontos(message.author,x)
       
 
     elif "!ajuda" in message.content.lower():
@@ -152,16 +173,28 @@ async def on_message(message):
         f.RemoverPontos(message.author)
       
     elif "!ditado" in message.content.lower():
-        ditado=f.MostrarRandomDitado()
-        await message.channel.send("toma"+ message.author.mention+f"```\n{ditado}```")      
-        await message.delete()  
-        f.RemoverPontos(message.author)
+        permissao = f.VerificarPontos(message.author)
+
+        if permissao>=10:
+            ditado=f.MostrarRandomDitado()
+            await message.channel.send("toma "+ message.author.mention+f"```\n{ditado}```")      
+            await message.delete()  
+            f.RemoverPontos(message.author)
+          
+        else:
+            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
       
     elif "!bomdia" in message.content.lower():
-        bomdia=f.MostrarRespostaBomDia()         
-        await message.channel.send("toma "+ message.author.mention+":"+f"```\n{bomdia}```")
-        await message.delete() 
-        f.RemoverPontos(message.author)
+        permissao = f.VerificarPontos(message.author)
+
+        if permissao>=10:
+            bomdia=f.MostrarRespostaBomDia()         
+            await message.channel.send("toma "+ message.author.mention+":"+f"```\n{bomdia}```")
+            await message.delete() 
+            f.RemoverPontos(message.author)
+        else:
+            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+      
       
     elif "!apagar" in message.content.lower():
         await message.channel.purge(limit=1000000)
@@ -174,42 +207,48 @@ async def on_message(message):
         embedVar.add_field(name=f"Parabéns {message.author.display_name}!", value=f"Já tens {pontos} pontos\nEstás no nível {nivel}.", inline=False)
         embedVar.set_thumbnail(url=message.author.avatar_url)
         await message.channel.send(embed=embedVar)
+
     
     elif "!batalha" in message.content.lower():
-        if not message.mentions:          
-            await message.channel.send(f"```{message.author.display_name} tens que escolher um oponente```")
+        permissao = f.VerificarPontos(message.author)
+
+        if permissao>=10:
+            if not message.mentions:          
+                await message.channel.send(f"```{message.author.display_name} tens que escolher um oponente```")
+            else:
+              
+              roast=f.MostrarRandomRoast()
+              userx=message.mentions[0].id
+              userMentioned = await client.fetch_user(userx)           
+              msg1= await message.channel.send(userMentioned.mention+f" reage com um emoji nos proximos X minutos para aceitar a batalha e enviar um roast de volta...ou vais fugir?\n"+f"```Tchiiii!! {message.author.display_name} disse: '{roast}'```")
+              cmsg1=discord.utils.get(client.cached_messages, id=msg1.id)       
+              await asyncio.sleep(10)
+              print(cmsg1.reactions)
+              
+              if cmsg1.reactions:
+                  msg2= await message.channel.send(message.author.mention+f"```Tchiiii!! {userMentioned.display_name} disse: '{roast}'```")
+                  await message.channel.send("@everyone Quem ganhou? vou contar as reações daqui a x minutos, quem tiver mais vence!")
+                  await asyncio.sleep(50)
+                  cmsg1r=discord.utils.get(client.cached_messages, id=msg1.id)  
+                  cmsg2r=discord.utils.get(client.cached_messages, id=msg2.id) 
+                  x=len(cmsg1r.reactions)              
+                  y=len(cmsg2r.reactions)
+                  print(x)
+                  print(y)
+                  if x>y:
+                      await message.channel.send(message.author.mention+f"```Ganhaste a {userMentioned.display_name}!Suuuuuuum!!!```")
+                      f.AdicionarPontos(message.author,100)
+                  elif y>x:
+                      await message.channel.send(userMentioned.mention+f"```Ganhaste a {message.author.display_name}!Suuuuuuum!!!```")
+                      f.AdicionarPontos(userMentioned,100)
+                  else:
+                      await message.channel.send(message.author.mention+" e"+userMentioned.mention+"```Empataram```")
+                      f.AdicionarPontos(message.author,50)
+                      f.AdicionarPontos(userMentioned,50)
+            await message.delete()
+            f.RemoverPontos(message.author,10)
         else:
-          
-          roast=f.MostrarRandomRoast()
-          userx=message.mentions[0].id
-          userMentioned = await client.fetch_user(userx)           
-          msg1= await message.channel.send(userMentioned.mention+f" reage com um emoji nos proximos X minutos para aceitar a batalha e enviar um roast de volta...ou vais fugir?\n"+f"```Tchiiii!! {message.author.display_name} disse: '{roast}'```")
-          cmsg1=discord.utils.get(client.cached_messages, id=msg1.id)       
-          await asyncio.sleep(10)
-          print(cmsg1.reactions)
-          
-          if cmsg1.reactions:
-              msg2= await message.channel.send(message.author.mention+f"```Tchiiii!! {userMentioned.display_name} disse: '{roast}'```")
-              await message.channel.send("@everyone Quem ganhou? vou contar as reações daqui a x minutos, quem tiver mais vence!")
-              await asyncio.sleep(50)
-              cmsg1r=discord.utils.get(client.cached_messages, id=msg1.id)  
-              cmsg2r=discord.utils.get(client.cached_messages, id=msg2.id) 
-              x=len(cmsg1r.reactions)              
-              y=len(cmsg2r.reactions)
-              print(x)
-              print(y)
-              if x>y:
-                  await message.channel.send(message.author.mention+"```Ganhaste!Suuuuuuum!!!```")
-                  f.AdicionarPontos(message.author,100)
-              elif y>x:
-                  await message.channel.send(userMentioned.mention+"```Ganhaste!Suuuuuuum!!!```")
-                  f.AdicionarPontos(userMentioned,100)
-              else:
-                  await message.channel.send(message.author.mention+" e"+userMentioned.mention+"```Empataram```")
-                  f.AdicionarPontos(message.author,50)
-                  f.AdicionarPontos(userMentioned,50)
-        await message.delete()
-        f.RemoverPontos(message.author,10)
+            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
               
           
           
