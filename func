@@ -1,6 +1,4 @@
 import random
-from datetime import datetime
-import discord
 import json
 
 
@@ -66,11 +64,11 @@ def MostrarFraseRandom():
     return response
 
 def MostrarRandomElogio():
-    randomElogio=["ai olha para mim sou muito lindo","outro elogio random","mandas gRanda tornozelo","fazia","tens cotovelos extremamente hidratados","tienes un belo chapilo","és tão perfeito como uma frigideira antiaderente","se tu fosses um fogão eu embabava as tuas bocas todas bem bem"]
+    randomElogio=["ai olha para mim sou muito lindo","mandas gRanda tornozelo","fazia","tens cotovelos extremamente hidratados","tienes un belo chapilo","és tão perfeito como uma frigideira antiaderente","se tu fosses um fogão eu embabava as tuas bocas todas bem bem","Podes dizer-me o teu nome completo para pedir ao Pai Natal?","Eu sei que o leite faz bem ao corpo, mas acho que exageraste","O arroz que cozinhas é espetacular!","a tua pele é tão impermeáveis!"]
     return random.choice(randomElogio).capitalize()
 
 def MostrarRandomRoast():
-    randomRoast=["sois tolinhe","ide badamerda","tens as unhas todas lascadinhas, ew","a tua mãe é tão gorda que quando vai à praia é a única a apanhar sol","todos têm um propósito na vida, o teu é tornar-te um doador de órgãos","Prefiro lamber cocó do chão do que almoçar contigo","se é para ter duas caras, pelo menos que uma delas seja bonita","és a versão humana das dores menstruais","cheiras a iogurte podre","as moscas devem te curtir bué :D","quando for grande quero ser como tu....ahahaha, estava a brincar, sois bosta","aposto que noutra vida foste um escaravelho do cocó","és mesmo ridicula essas calças não condizem com as meias","a tua existência é como uma festa às 4 da manhã, it's absurd puta","a tua voz é tão linda que me dá vontade de te apertar o pescoço","Isso é a tua cara ou uma amostra de cerelac dos anos 70?","És lindo como a merda","A vida são dois dias e tu decidiste ser feio que dói"]
+    randomRoast=["sois tolinhe!","ide badamerda!","tens as unhas todas lascadinhas, ew!","a tua mãe é tão gorda que quando vai à praia é a única a apanhar sol!","todos têm um propósito na vida, o teu é tornar-te um doador de órgãos!","se era para teres duas caras, pelo menos que uma delas fosse bonita!","és a versão humana das dores menstruais!","cheiras a iogurte podre!","as moscas devem te curtir bué!","quando for grande quero ser como tu....ahahaha, estava a brincar, sois bosta!","aposto que noutra vida foste um escaravelho do cocó!","és mesmo ridicula essas calças não condizem com as meias!","a tua existência é como uma festa às 4 da manhã, it's absurd puta!","a tua voz é tão linda que me dá vontade de te apertar o pescoço!","Isso é a tua cara ou uma amostra de cerelac dos anos 70?","És lindo como a merda!","A vida são dois dias e tu decidiste ser feio que dói!","A tua mãe tem celulite!"]
     return random.choice(randomRoast).capitalize()
 
 def MostrarRandomDitado():
@@ -105,28 +103,7 @@ def MostrarFraseAjuda():
 !bomdia----------------------------------------------------------------o bot reage ao teu bom dia
           """
 
-  
-def MostrarEstadoBot():
-    listen=["You","God","Your momma","Mr Jesus","8bit music","HAL9000","Britney Spears","Styx-MR.Roboto","Kraftwerk-The Robots","Daft Punk-Robot Rock","Radiohead-Paranoid Android","dial up modems connecting","Clutch-10001110101","The Network-Joe Robot"]
-    watch=["Robot Monster","The robot dog","I, Robot ","Clash of the Titans","Teddy, A.I.","The Colossus of New York","Rogue One","Alien: Resurrection","Terminator 3","Starcrash","Tobor the Great","Prometheus","Robocop 3","The World’s End","Austin Powers: International Man of Mystery","Star Trek","Lost in Space","Total Recall","Devil Girl from Mars","Minority Report","Flash Gordon","The Earth Dies Screaming","The Matrix","The Last Starfighter","Ex Machina","West World","The Hitchhiker’s Guide to the Galaxy","Godzilla vs. Megalon","WALL·E","Blade Runner","Star Wars","Metropolis","The Wizard of Oz","2001 Space Odissey"]
-    playing=["With cables","Find the bug","Short circuit simulator","Destroy all humans","With motherboards","Robot warfare"]
-
-    x=random.choice(range(0,2))
-    if x==0:
-        d = dict()
-        d['str'] = random.choice(watch)
-        d['x']   = x
-        return d
-    if x==1:
-        i = dict()
-        i['str'] = random.choice(listen)
-        i['x']   = x
-        return i
-    else:
-        c = dict()
-        c['str'] = random.choice(playing)
-        c['x']   = x
-        return c
+ 
 
 
 def MostrarNivel(member):
@@ -216,5 +193,9 @@ def VerificarPontos(member):
     a_file.close()
     pontos=json_object[s]
     return pontos
+
+          
+
+  
 
 
