@@ -9,6 +9,7 @@ from discord.utils import get
 import func as f
 from keep_alive import keep_alive
 import asyncio
+import random
 
 
 load_dotenv()
@@ -215,43 +216,52 @@ async def on_message(message):
         if permissao>=10:
             if not message.mentions:          
                 await message.channel.send(f"```{message.author.display_name} tens que escolher um oponente```")
-            else:
-              
+            else:              
               roast=f.MostrarRandomRoast()
               userx=message.mentions[0].id
               userMentioned = await client.fetch_user(userx)           
               msg1= await message.channel.send(userMentioned.mention+f" reage com um emoji nos proximos X minutos para aceitar a batalha e enviar um roast de volta...ou vais fugir?\n"+f"```Tchiiii!! {message.author.display_name} disse: '{roast}'```")
-              cmsg1=discord.utils.get(client.cached_messages, id=msg1.id)       
               await asyncio.sleep(10)
-              print(cmsg1.reactions)
-              
-              if cmsg1.reactions:
-                  msg2= await message.channel.send(message.author.mention+f"```Tchiiii!! {userMentioned.display_name} disse: '{roast}'```")
-                  await message.channel.send("@everyone Quem ganhou? vou contar as reações daqui a x minutos, quem tiver mais vence!")
-                  await asyncio.sleep(50)
-                  cmsg1r=discord.utils.get(client.cached_messages, id=msg1.id)  
-                  cmsg2r=discord.utils.get(client.cached_messages, id=msg2.id) 
-                  x=len(cmsg1r.reactions)              
-                  y=len(cmsg2r.reactions)
-                  print(x)
-                  print(y)
-                  if x>y:
-                      await message.channel.send(message.author.mention+f"```Ganhaste a {userMentioned.display_name}!Suuuuuuum!!!```")
-                      f.AdicionarPontos(message.author,100)
-                  elif y>x:
-                      await message.channel.send(userMentioned.mention+f"```Ganhaste a {message.author.display_name}!Suuuuuuum!!!```")
-                      f.AdicionarPontos(userMentioned,100)
-                  else:
-                      await message.channel.send(message.author.mention+" e"+userMentioned.mention+"```Empataram```")
-                      f.AdicionarPontos(message.author,50)
-                      f.AdicionarPontos(userMentioned,50)
-            await message.delete()
-            f.RemoverPontos(message.author,10)
+              msg_r=discord.utils.get(client.cached_messages, id=msg1.id)
+              print(msg_r.reactions)  
+              if len(msg_r.reactions) >= 1:
+                  for x in msg_r.reactions:
+                      users = await x.users().flatten()
+                      for x in users:  
+                          if x.id == userMentioned.id:                                
+                              msg2= await message.channel.send(message.author.mention+f"```Tchiiii!! {userMentioned.display_name} disse: '{roast}'```")
+                              await message.channel.send("@everyone Quem ganhou? vou contar as reações daqui a x minutos, quem tiver mais vence!")
+                              await asyncio.sleep(50)
+                              cmsg1r=discord.utils.get(client.cached_messages, id=msg1.id) 
+                              cmsg2r=discord.utils.get(client.cached_messages, id=msg2.id)
+                              x=len(cmsg1r.reactions)              
+                              y=len(cmsg2r.reactions)
+                              msg_a=discord.utils.get(client.cached_messages, id=message.id)
+                              if x>y:
+                                  await message.channel.send(message.author.mention+f"```Ganhaste a {userMentioned.display_name}!Suuuuuuum!!!```")
+                                  f.AdicionarPontos(message.author,100)
+                              elif y>x:
+                                  await message.channel.send(userMentioned.mention+f"```Ganhaste a {message.author.display_name}!Suuuuuuum!!!```")
+                                  f.AdicionarPontos(userMentioned,100)
+                              else:                                      
+                                  await message.channel.send(message.author.mention+" e"+userMentioned.mention+"```Empataram```")
+                                  f.AdicionarPontos(message.author,50)
+                                  f.AdicionarPontos(userMentioned,50)
+                                  await msg_a.delete()
+                                  f.RemoverPontos(message.author,10)
+                              break
+                          else:
+                              await message.channel.send(x.mention+f"  Estava à espera duma reação mas era de {userMentioned.display_name}...mas parece que não aceitou a batalha")
+
+                            
+
+              else:
+                await message.channel.send(message.author.mention+f"´´´Parece que o {userMentioned.display_name} não quer brincar´´´")
         else:
             await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+                      
+            
               
-          
-          
           
     else:
         f.AdicionarPontos(message.author,10)
@@ -264,17 +274,16 @@ async def mytask():
   await channel.purge(limit=1)
   await channel.send(f"```online às: {time2}``` ")
     
-  x=f.MostrarEstadoBot()['x']
-    
-  if x==0:
-      estadobot=f.MostrarEstadoBot()['str']
-      await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=estadobot))
+  listen=["You","God","Your momma","Mr Jesus","8bit music","HAL9000","Britney Spears","Styx-MR.Roboto","Kraftwerk-The Robots","Daft Punk-Robot Rock","Radiohead-Paranoid Android","dial up modems connecting","Clutch-10001110101","The Network-Joe Robot"]
+  watch=["You","God","Your momma","Mr Jesus","Robot Monster","The robot dog","I, Robot ","Clash of the Titans","Teddy, A.I.","The Colossus of New York","Rogue One","Alien: Resurrection","Terminator 3","Starcrash","Tobor the Great","Prometheus","Robocop 3","The World’s End","Austin Powers: International Man of Mystery","Star Trek","Lost in Space","Total Recall","Devil Girl from Mars","Minority Report","Flash Gordon","The Earth Dies Screaming","The Matrix","The Last Starfighter","Ex Machina","West World","The Hitchhiker’s Guide to the Galaxy","Godzilla vs. Megalon","WALL·E","Blade Runner","Star Wars","Metropolis","The Wizard of Oz","2001 Space Odissey"]
+  playing=["With cables","Find the bug","Short circuit simulator","Destroy all humans","With motherboards","Robot warfare"]
+  x=random.choice(range(0,2))
+  if x==0:      
+      await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=random.choice(watch)))
   elif x==1:
-      estadobot=f.MostrarEstadoBot()['str']
-      await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=estadobot))
+      await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=random.choice(listen)))
   else:
-      estadobot=f.MostrarEstadoBot()['str']
-      await client.change_presence(activity=discord.Game(estadobot))
+      await client.change_presence(activity=discord.Game(random.choice(playing)))
 
       
 keep_alive()
