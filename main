@@ -5,18 +5,18 @@ from discord.ext import tasks,commands
 from datetime import datetime
 from dotenv import load_dotenv
 import pytz
-from discord.utils import get
+import discord.utils
 import func as f
 from keep_alive import keep_alive
 import asyncio
-import random
-
+import json
+import time
 
 load_dotenv()
-
 TOKEN = os.getenv('DISCORD_TOKEN')
-client = discord.Client()
-intents = discord.Intents.default()
+client = discord.Client
+print("logged")
+intents = discord.Intents.all()
 intents.members = True
 client = commands.Bot(command_prefix=',', case_insensitive=True, intents=intents)
 logtime=datetime.now(pytz.timezone("Europe/London"))
@@ -24,64 +24,27 @@ time = logtime.strftime("%H:%M")
 
 
 
-
 @client.event
-async def on_ready():  
+async def on_ready(): 
+
   print(f'{client.user.name} has connected to Discord!')
   mytask.start()
-  channel = client.get_channel(993605157248041081)
-  await channel.send("erase me")
-  await channel.send(f"```up: {time}```")
-
   
+    
+ 
+
 
 @client.event
 async def on_member_join(member):
-    
-    channel = client.get_channel(994691913955430526)
-    roleNewPplo=get(member.guild.roles, id=995770133068918975)
-    await member.add_roles(roleNewPplo)
-    desc=f"Olá{member.mention}!Bem-vindo!"
-    regras="""
-Regra random1 -- basdpqwodkas
-Regra random2 -- basdpqwodkas
-Regra random3 -- basdpqwodkas
-Regra random4 -- para saber os comandos bot escreve !ajuda ou !dm
- """
-    comandos="""
-!roast (podes mencionar alguem.ex !roast @user)--ridiculariza gravemente alguém ou a ti mesmo
-!elogio(podes elogiar alguem.ex !elogio @user)--elogia  alguém ou a ti mesmo
-!frase--o bot mostra-te uma frase linda
-!sugestao--encaminha reports, sugestões, ou mensagens diretamente aos admin do canal
-!dm--recebe uma dm do bot para falarem em privado
-!ditado--o bot mostra um ditado adaptado a >18
-!bomdia--o bot reage ao teu bom dia
-  
-Adiciona uma reação para ganhares acesso ao canal."""
-    embedVar = discord.Embed(title="Regras", description=desc, color=0x00ff00)
-    embedVar.add_field(name="Regras", value=regras, inline=False)
-    embedVar.add_field(name="Comandos", value=comandos, inline=False)
-    await channel.send(embed=embedVar)
+    print(member.display_name+" Juntou-se ao server")
+    f.PontosOnJoin(member)
+    print("Foi criado o user na lista de pontos - colocados 0 pontos ao user "+member.display_name )
+    f.ComandosOnJoin(member)
+    print("Foi criado o user na lista de comandos - colocados 3 pontos ao user "+member.display_name )
+    channeltosend = client.get_channel(804524365583745054)
+    await channeltosend.send(" Digam olá ao novo membro do PeraltaGang -> "+member.mention)
+       
 
-    
-
-    
-
-@client.event
-async def on_reaction_add(reaction, member):
-    sin = client.get_channel(993684488410386563) 
-    svalidacao= client.get_channel(994691913955430526) 
-    
-    roleNewPplo=get(member.guild.roles, id=995770133068918975)
-    roleMain=get(member.guild.roles, id=994352546204373032)
-    
-    if roleNewPplo in member.roles:
-        await member.remove_roles(roleNewPplo)
-        await member.add_roles(roleMain)
-        await sin.send(f'Olá '+member.mention)
-        await svalidacao.purge(limit=10)
-        
-        f.PontosOnJoin(member)
 
        
         
@@ -89,9 +52,11 @@ async def on_reaction_add(reaction, member):
 
 @client.event
 async def on_member_remove(member):
-    channel = client.get_channel(993684543041191966) 
-    await channel.send(f'```Tenho de abandonar que tenho uma consulta às cinco - diz {member.display_name}```')
+    print(member.display_name +" Saiu do server")
     f.PontosOnQuit(member)
+    print("retirado da lista de pontos o user " +member.display_name)
+    f.ComandosOnQuit(member)
+    print("retirado da lista de comandos o user " +member.display_name)
     
     
   
@@ -99,33 +64,163 @@ async def on_member_remove(member):
 async def on_message(message):
     if message.author == client.user:
         return
-    guild = client.get_guild(992825262205046915)
+    guild = client.get_guild(803098749823221810)
 
     if message.channel not in guild.channels:
             await message.channel.send("nope")
+
+
+
+      
     elif message.content == '!frase':
       permissao = f.VerificarPontos(message.author)
-
-      if permissao>=10:  
-          fraseAMostrar=f.MostrarFraseRandom()
-          now = datetime.now()
-          current_time = now.strftime("%H:%M:%S")         
-          await message.channel.send("toma "+message.author.mention+f"```\n{(fraseAMostrar[5:]).capitalize()}```")
-          print(current_time+"->"+" "+fraseAMostrar)
-          await message.delete()
-          f.RemoverPontos(message.author,10)
+      contador = f.ContarComandosDiarios(message.author)
+      if contador>2:
+        await message.channel.send(message.author.mention+f"```Já usaste 3 comandos hoje.Tenta novamente amanhã```")
       else:
-          await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
-        
-    elif "boa n" in message.content.lower():
-        await message.channel.send("Boa noite o &$%")  
+        if permissao>=10:  
+            fraseAMostrar=f.MostrarFraseRandom()
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")         
+            await message.channel.send("toma "+message.author.mention+f"```\n{(fraseAMostrar[5:]).capitalize()}```")
+            print(current_time+"->"+" "+fraseAMostrar)
+            await message.delete()
+            f.RemoverPontos(message.author,10)
+            f.AdicionarComandosDiarios(message.author,1)
+        else:
+            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
 
-    elif "bot" in message.content.lower():
-        await message.channel.send("Eu?")
+
+  
+  
+    elif "!ditado" in message.content.lower():
+        permissao = f.VerificarPontos(message.author)
+        contador = f.ContarComandosDiarios(message.author)
+        if contador>2:
+          await message.channel.send(message.author.mention+f"```Já usaste 3 comandos hoje.Tenta novamente amanhã```")
+        else:
+          if permissao>=10:
+              ditado=f.MostrarRandomDitado()
+              await message.channel.send("toma "+ message.author.mention+f"```\n{ditado}```")     
+              await message.delete()  
+              f.RemoverPontos(message.author,10)
+              f.AdicionarComandosDiarios(message.author,1)          
+          else:
+              await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+        
+
+    elif "!batalha" in message.content.lower():
+          permissao = f.VerificarPontos(message.author)
+          contador = f.ContarComandosDiarios(message.author)
+          if contador>2:
+            await message.channel.send(message.author.mention+f"```Já usaste 3 comandos hoje.Tenta novamente amanhã```")
+          else:
+            if permissao>=10:
+                if not message.mentions:          
+                    await message.channel.send(f"```{message.author.display_name} tens que escolher um oponente```")
+                else:  
+                  f.RemoverPontos(message.author,10)
+                  f.AdicionarComandosDiarios(message.author,1)
+                  roast=f.MostrarRandomRoast()
+                  roast2=f.MostrarRandomRoast()
+                  userx=message.mentions[0].id
+                  userMentioned = await client.fetch_user(userx)           
+                  msg1= await message.channel.send(userMentioned.mention+f" reage com um emoji no proximo minuto para aceitar a batalha e enviar um roast de volta...ou vais fugir?\n"+f"```Tchiiii!! {message.author.display_name} disse: '{roast}'```")
+                  await asyncio.sleep(60)
+                  msg_r=discord.utils.get(client.cached_messages, id=msg1.id)
+                  print(msg_r.reactions)  
+                  if len(msg_r.reactions) >= 1:
+                      for x in msg_r.reactions:
+                          users = await x.users().flatten()
+                          count=0
+                          for x in users:  
+                              if x.id == userMentioned.id:                                
+                                  msg2= await message.channel.send(message.author.mention+f"```Tchiiii!! {userMentioned.display_name} disse: '{roast2}'```")
+                                  await message.channel.send("@everyone Quem ganhou? Vou contar as reações, daqui a dois minutos quem tiver mais vence!")
+                                  await asyncio.sleep(120)
+                                  cmsg1r=discord.utils.get(client.cached_messages, id=msg1.id) 
+                                  cmsg2r=discord.utils.get(client.cached_messages, id=msg2.id)
+                                  x=len(cmsg1r.reactions)              
+                                  y=len(cmsg2r.reactions)
+                                  msg_a=discord.utils.get(client.cached_messages, id=message.id)  
+                                  
+                                  print(count)
+                                  if x>y:
+                                      await message.channel.send(message.author.mention+f"```Ganhaste a {userMentioned.display_name}!Suuuuuuum!!!```")
+                                      f.AdicionarPontos(message.author,100)
+                                      
+                                      count+=1
+                                      print(count)
+                                      return
+                                  elif y>x:
+                                      await message.channel.send(userMentioned.mention+f"```Ganhaste a {message.author.display_name}!Suuuuuuum!!!```")
+                                      f.AdicionarPontos(userMentioned,100)
+                                      count+=1
+                                      print(count)
+                                      return
+                                  else:                                      
+                                      await message.channel.send(message.author.mention+" e"+userMentioned.mention+"```Empataram```")
+                                      f.AdicionarPontos(message.author,50)
+                                      f.AdicionarPontos(userMentioned,50)
+                                      await msg_a.delete()                         
+                                      count+=1
+                                      print(count)
+                                      return
+                              if count<1:
+                                  print(count)
+                                  await message.channel.send(x.mention+f"  Estava à espera duma reação mas era de {userMentioned.display_name}...")     
+                  else:
+                    await message.channel.send(message.author.mention+f"```Parece que o {userMentioned.display_name} não quer brincar```")
+                    f.RemoverPontos(userMentioned,10)
+                    return
+            else:
+                await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+                return
+
+
+    elif "!sugestao" in message.content.lower():
+        channeltosend = client.get_channel(1014700917871886456)
+        await channeltosend.send(message.author.display_name +": " +message.content)
+        await message.delete()
+        f.AdicionarPontos(message.author,x)
+
+
+
+
+      
+
+    elif "!ajuda" in message.content.lower():
+        ajuda= f.MostrarFraseAjuda()
+        await message.author.send(ajuda)
+        await message.delete()
+
+
+
+
+      
+    elif "!comandos" in message.content.lower():
+        print("yup")
+        comandos = f.ContarComandosDiarios(message.author)
+        await message.channel.send(message.author.mention+f"```Já usaste {comandos} comandos hoje```")
+        await message.delete()
+
+
+    elif "!pontos" in message.content.lower():
+        pontos= f.MostrarPontos(message.author)
+        nivel= f.MostrarNivel(message.author)
+        embedVar = discord.Embed(title="Pontuação", description="", color=0x2596be)
+        embedVar.add_field(name=f"Parabéns {message.author.display_name}!", value=f"Já tens {pontos} pontos\nEstás no nível {nivel}.", inline=False)
+        embedVar.set_thumbnail(url=message.author.avatar_url)
+        await message.channel.send(embed=embedVar)
+        await message.delete()
+  
 
     elif "!roast" in message.content.lower():     
-        permissao = f.VerificarPontos(message.author)
-
+      permissao = f.VerificarPontos(message.author)
+      contador = f.ContarComandosDiarios(message.author)
+      if contador>2:
+        await message.channel.send(message.author.mention+f"```Já usaste 3 comandos hoje.Tenta novamente amanhã```")
+      else:
         if permissao>10:
             roast=f.MostrarRandomRoast()        
             if message.mentions:
@@ -137,12 +232,20 @@ async def on_message(message):
               await message.channel.send(message.author.mention+f"```{roast}```")
               await message.delete()
             f.RemoverPontos(message.author,10)
+            f.AdicionarComandosDiarios(message.author,1)
         else:
               await message.channel.send(message.author.mention+f"```Não tens pontos suficientes .Ganhas pontos a participar no chat```")
-            
-    elif "!elogio" in message.content.lower():  
-        permissao = f.VerificarPontos(message.author)
 
+
+
+
+      
+    elif "!elogio" in message.content.lower():  
+      permissao = f.VerificarPontos(message.author)
+      contador = f.ContarComandosDiarios(message.author)
+      if contador>2:
+        await message.channel.send(message.author.mention+f"```Já usaste 3 comandos hoje.Tenta novamente amanhã```")
+      else:
         if permissao>=10:
             elogio=f.MostrarRandomElogio()
             if message.mentions:
@@ -150,143 +253,335 @@ async def on_message(message):
                 userMentioned = await client.fetch_user(userx)            
                 await message.channel.send(userMentioned.mention+f"```Ai aiiii!! {message.author.display_name} disse:'{elogio}'```")
                 await message.delete()
+                f.RemoverPontos(message.author,10)
             else:              
-                await message.channel.send(message.author.mention+f"```elogio```")
+                await message.channel.send(message.author.mention+f"```{elogio}```")
                 await message.delete()
-            f.RemoverPontos(message.author)
+                f.RemoverPontos(message.author,10)
+                f.AdicionarComandosDiarios(message.author,1)
         else:
             await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+      
+
+
+
+    elif "bom dia"  in message.content.lower():                      
+      hora=datetime.now(pytz.timezone("Europe/London")).hour
+      bomdia=f.MostrarRespostaBomDia()
+      message.channel.send(message.author.mention+":"+f"```\n{bomdia}```")
+      hora=datetime.now(pytz.timezone("Europe/London")).hour
+      if  hora>6 and hora<12:
+        f.AdicionarPontos(message.author,10)
+
+    elif "bot" in message.content.lower():
+      
+      string=message.content.lower()
+      print(string)
+      stringAProcurar=string.replace('bot', '_')
+      print(stringAProcurar)
+      bot=f.MostrarRespostaBot()   
+      print(stringAProcurar)
+      if stringAProcurar == '_':
+        print("vazio: "+stringAProcurar)      
+      elif "cala " in stringAProcurar:
+        print("cala : "+message.content)
+        return
+      elif "burro" in stringAProcurar:
+        print("burro: "+message.content)
+        return
+      elif "medo" in stringAProcurar: 
+        print("medo: "+message.content)
+        return
+      elif "estupido" in stringAProcurar:
+        print("estupido: "+message.content)
+        return
+      elif "feio" in stringAProcurar:
+        print("feio: "+message.content)
+        return
+      elif "vai dormir" in stringAProcurar:
+        print("vai dormir: "+message.content)
+        return
+      elif "cheiras" in stringAProcurar:
+        print("cheiras: "+message.content)
+        return
+      elif "chato" in stringAProcurar:
+        print("chato: "+message.content)
+        return
+      elif "adeus" in stringAProcurar:
+        print("adeus: "+message.content)
+        return
+      elif "cu" in stringAProcurar:
+        print("cu: "+message.content)
+        return
+      elif "estudasses" in stringAProcurar:
+        print("estudasses: "+message.content)
+        return
+      elif "aldrabão" in stringAProcurar:
+        print("aldrabão: "+message.content)
+        return
+      elif "mentiroso" in stringAProcurar:
+        print("mentiroso: "+message.content)
+        return
+      elif  "fds" in stringAProcurar:
+        print("fds: "+message.content)
+        return
+      elif "caralho" in stringAProcurar:
+        print("caralho: "+message.content)
+        return
+      elif "fdx" in stringAProcurar:
+        print("fdx: "+message.content)
+        return
+      elif "crl" in stringAProcurar:
+        print("crl: "+message.content)
+        return
+      elif "crlho" in stringAProcurar:
+        print("crlho: "+message.content)
+        return
+      elif "FDP" in stringAProcurar:
+        print("FDP: "+message.content)
+        return
+      elif "filho da puta" in stringAProcurar:
+        print("filho da puta: "+message.content)
+        return
+      elif "morrer" in stringAProcurar:
+        print("morrer: "+message.content)
+        return
+      elif "merda" in stringAProcurar:
+        print("merda: "+message.content)
+        return
+      elif "sabes" in message.content.lower(): 
+        print("sabes: " +message.content)
+        stringAProcurar=message.content[5:]
+        await message.channel.send(message.author.mention+":"+f"```\nEu não sei mas o google sabe: https://letmegooglethat.com/?q={stringAProcurar}```")
+        return
+      else:
+        await message.channel.send(message.author.mention+":"+f"```\n{bot}```")
+
+       
+
+
+
+
+    elif "!contarcomandos"in message.content:
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      userAResetar=mensagemArgumento1[0:-1] 
+      x=0      
+      for member in guild.members:
+        print (member.display_name)
+        if member.display_name==userAResetar:
+          x=1
+          comandos=f.ContarComandosDiarios(member)
+          await message.channel.send(message.author.mention+f"``` O user {userAResetar} tem {comandos} comandos diarios acumulados```")      
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{userAResetar}'```")    
+
+
     
-    elif "!dm" in message.content.lower(): 
-        dmMessage=f.MostrarFraseDM()        
-        await message.author.send(dmMessage)
-        await message.delete()
+    elif "!adicionarcomandos" in message.content :
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      mensagemArgumento2=mensagemArgumento0[1]
+      pontosAAdicionar=mensagemArgumento2[0:-1]
+      intPontosAAdicionar=int(pontosAAdicionar)
+      print(mensagemArgumento1 +" :"+ str(intPontosAAdicionar))
+      x=0      
+      print("A procurar: "+mensagemArgumento1)
+      for member in guild.members:
+        
+        if member.display_name==mensagemArgumento1:
+          x=1
+          f.AdicionarComandosDiarios(member,intPontosAAdicionar)
+          await message.channel.send(message.author.mention+f"``` foram adicionados {intPontosAAdicionar} comandos ao user {member.display_name}```")      
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{mensagemArgumento1}'```")
+
+
+
+    elif "!removercomandos" in message.content :
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      mensagemArgumento2=mensagemArgumento0[1]
+      ComandosARetirar=mensagemArgumento2[0:-1]
+      intComandosARetirar=int(ComandosARetirar)
+      x=0    
+      print("A procurar: "+mensagemArgumento1)
+      for member in guild.members:
+        
+        if member.display_name==mensagemArgumento1:
+          x=1
+          ComandosDoUser=int(f.ContarComandosDiarios(member))          
+          if ComandosDoUser<intComandosARetirar:
+            await message.channel.send(message.author.mention+f"```O user {member.display_name} só tem {ComandosDoUser} comandos disponiveis, não podes retirar {intComandosARetirar}!```")
+            break
+          else:
+            f.RemoverComandosDiarios(member,intComandosARetirar)
+            await message.channel.send(message.author.mention+f"``` Foram retirados {intComandosARetirar} comandos ao user {member.display_name}```")    
+            break            
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{mensagemArgumento1}'```")
+
+
+        
     
-    elif "!sugestao" in message.content.lower():
-        channeltosend = client.get_channel(994404469389414500)
-        await channeltosend.send(message.content)
-        await message.delete()
-        f.AdicionarPontos(message.author,x)
-      
+    elif "!resetcomandos" in message.content :
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      userAResetar=mensagemArgumento1[0:-1] 
+      x=0      
+      print("A procurar: "+mensagemArgumento1)
+      for member in guild.members:
+        
+        if member.display_name==userAResetar:
+          x=1
+          comandos=f.ResetarComandosDiariosPorUser(member)
+          await message.channel.send(message.author.mention+f"``` O user {userAResetar} tem agora 0 comandos diarios acumulados```")      
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{userAResetar}'```")    
 
-    elif "!ajuda" in message.content.lower():
-        ajuda= f.MostrarFraseAjuda()
-        await message.author.send(ajuda)
-        await message.delete()
-        f.RemoverPontos(message.author)
-      
-    elif "!ditado" in message.content.lower():
-        permissao = f.VerificarPontos(message.author)
 
-        if permissao>=10:
-            ditado=f.MostrarRandomDitado()
-            await message.channel.send("toma "+ message.author.mention+f"```\n{ditado}```")      
-            await message.delete()  
-            f.RemoverPontos(message.author)
-          
-        else:
-            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
-      
-    elif "!bomdia" in message.content.lower():
-        permissao = f.VerificarPontos(message.author)
 
-        if permissao>=10:
-            bomdia=f.MostrarRespostaBomDia()         
-            await message.channel.send("toma "+ message.author.mention+":"+f"```\n{bomdia}```")
-            await message.delete() 
-            f.RemoverPontos(message.author)
-        else:
-            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
-      
-      
+  
     elif "!apagar" in message.content.lower():
         await message.channel.purge(limit=1000000)
 
-      
-    elif "!pontos" in message.content.lower():
-        pontos= f.MostrarPontos(message.author)
-        nivel= f.MostrarNivel(message.author)
-        embedVar = discord.Embed(title="Pontuação", description="", color=0x2596be)
-        embedVar.add_field(name=f"Parabéns {message.author.display_name}!", value=f"Já tens {pontos} pontos\nEstás no nível {nivel}.", inline=False)
-        embedVar.set_thumbnail(url=message.author.avatar_url)
-        await message.channel.send(embed=embedVar)
 
+
+  
+    elif "!retirarpontos" in message.content:      
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      mensagemArgumento2=mensagemArgumento0[1]
+      pontosARetirar=mensagemArgumento2[0:-1]
+      intPontosARetirar=int(pontosARetirar)
+      x=0      
+      print("A procurar: "+mensagemArgumento1)
+      for member in guild.members:
+        
+        if member.display_name==mensagemArgumento1:
+          x=1
+          pontosDoUser=int(f.MostrarPontos(member))          
+          if pontosDoUser<intPontosARetirar:
+            await message.channel.send(message.author.mention+f"```O user {member.display_name} só tem {pontosDoUser}, não podes retirar {intPontosARetirar}!```")
+            break
+          else:
+            f.RemoverPontos(member,intPontosARetirar)
+            await message.channel.send(message.author.mention+f"``` foram retirados {intPontosARetirar} pontos ao user {member.display_name}```")    
+            break            
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{mensagemArgumento1}'```")
+
+    elif "!adicionarpontos" in message.content:      
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      mensagemArgumento2=mensagemArgumento0[1]
+      pontosAAdicionar=mensagemArgumento2[0:-1]
+      intPontosAAdicionar=int(pontosAAdicionar)
+      print(mensagemArgumento1 +" :"+ str(intPontosAAdicionar))
+      x=0     
+      print("A procurar: "+mensagemArgumento1)
+      for member in guild.members:
+        
+        if member.display_name==mensagemArgumento1:
+          x=1
+          f.AdicionarPontos(member,intPontosAAdicionar)
+          await message.channel.send(message.author.mention+f"``` foram adicionados {intPontosAAdicionar} pontos ao user {member.display_name}```")      
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{mensagemArgumento1}'```")
+
+
+
+
+  
+    elif "!verpontos" in message.content:
+      mensagemOriginal = message.content
+      mensagemSplit= mensagemOriginal.split("(")
+      mensagemArgumentos = mensagemSplit[1]
+      mensagemArgumento0=mensagemArgumentos.split(",")
+      mensagemArgumento1=mensagemArgumento0[0]
+      userAVerificar=mensagemArgumento1[0:-1] 
+      x=0     
+      print("A procurar: "+mensagemArgumento1)
+      for member in guild.members:
+       
+        if member.display_name==userAVerificar:
+          x=1
+          pontos=f.MostrarPontos(member)
+          await message.channel.send(message.author.mention+f"``` O user {userAVerificar} tem {pontos} pontos```")      
+      if(x==0):
+        await message.channel.send(message.author.mention+f"```Não existe nenhum user chamado '{userAVerificar}'```")    
+
+
+
+
+
+  
+
+
+
+  
     
-    elif "!batalha" in message.content.lower():
-        permissao = f.VerificarPontos(message.author)
-
-        if permissao>=10:
-            if not message.mentions:          
-                await message.channel.send(f"```{message.author.display_name} tens que escolher um oponente```")
-            else:              
-              roast=f.MostrarRandomRoast()
-              userx=message.mentions[0].id
-              userMentioned = await client.fetch_user(userx)           
-              msg1= await message.channel.send(userMentioned.mention+f" reage com um emoji nos proximos X minutos para aceitar a batalha e enviar um roast de volta...ou vais fugir?\n"+f"```Tchiiii!! {message.author.display_name} disse: '{roast}'```")
-              await asyncio.sleep(10)
-              msg_r=discord.utils.get(client.cached_messages, id=msg1.id)
-              print(msg_r.reactions)  
-              if len(msg_r.reactions) >= 1:
-                  for x in msg_r.reactions:
-                      users = await x.users().flatten()
-                      for x in users:  
-                          if x.id == userMentioned.id:                                
-                              msg2= await message.channel.send(message.author.mention+f"```Tchiiii!! {userMentioned.display_name} disse: '{roast}'```")
-                              await message.channel.send("@everyone Quem ganhou? vou contar as reações daqui a x minutos, quem tiver mais vence!")
-                              await asyncio.sleep(50)
-                              cmsg1r=discord.utils.get(client.cached_messages, id=msg1.id) 
-                              cmsg2r=discord.utils.get(client.cached_messages, id=msg2.id)
-                              x=len(cmsg1r.reactions)              
-                              y=len(cmsg2r.reactions)
-                              msg_a=discord.utils.get(client.cached_messages, id=message.id)
-                              if x>y:
-                                  await message.channel.send(message.author.mention+f"```Ganhaste a {userMentioned.display_name}!Suuuuuuum!!!```")
-                                  f.AdicionarPontos(message.author,100)
-                              elif y>x:
-                                  await message.channel.send(userMentioned.mention+f"```Ganhaste a {message.author.display_name}!Suuuuuuum!!!```")
-                                  f.AdicionarPontos(userMentioned,100)
-                              else:                                      
-                                  await message.channel.send(message.author.mention+" e"+userMentioned.mention+"```Empataram```")
-                                  f.AdicionarPontos(message.author,50)
-                                  f.AdicionarPontos(userMentioned,50)
-                                  await msg_a.delete()
-                                  f.RemoverPontos(message.author,10)
-                              break
-                          else:
-                              await message.channel.send(x.mention+f"  Estava à espera duma reação mas era de {userMentioned.display_name}...mas parece que não aceitou a batalha")
-
-                            
-
-              else:
-                await message.channel.send(message.author.mention+f"´´´Parece que o {userMentioned.display_name} não quer brincar´´´")
-        else:
-            await message.channel.send(message.author.mention+f"```Não tens pontos suficientes. Ganhas pontos a participar no chat```")
+    
                       
             
               
           
     else:
         f.AdicionarPontos(message.author,10)
+
+
+
       
-@tasks.loop(seconds=500)
+      
+@tasks.loop(seconds=3000)
 async def mytask():
-  channel = client.get_channel(993605157248041081)
   logtime2=datetime.now(pytz.timezone("Europe/London"))
-  time2 = logtime2.strftime("%H:%M")
-  await channel.purge(limit=1)
-  await channel.send(f"```online às: {time2}``` ")
-    
-  listen=["You","God","Your momma","Mr Jesus","8bit music","HAL9000","Britney Spears","Styx-MR.Roboto","Kraftwerk-The Robots","Daft Punk-Robot Rock","Radiohead-Paranoid Android","dial up modems connecting","Clutch-10001110101","The Network-Joe Robot"]
-  watch=["You","God","Your momma","Mr Jesus","Robot Monster","The robot dog","I, Robot ","Clash of the Titans","Teddy, A.I.","The Colossus of New York","Rogue One","Alien: Resurrection","Terminator 3","Starcrash","Tobor the Great","Prometheus","Robocop 3","The World’s End","Austin Powers: International Man of Mystery","Star Trek","Lost in Space","Total Recall","Devil Girl from Mars","Minority Report","Flash Gordon","The Earth Dies Screaming","The Matrix","The Last Starfighter","Ex Machina","West World","The Hitchhiker’s Guide to the Galaxy","Godzilla vs. Megalon","WALL·E","Blade Runner","Star Wars","Metropolis","The Wizard of Oz","2001 Space Odissey"]
-  playing=["With cables","Find the bug","Short circuit simulator","Destroy all humans","With motherboards","Robot warfare"]
-  x=random.choice(range(0,2))
-  if x==0:      
-      await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=random.choice(watch)))
-  elif x==1:
-      await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=random.choice(listen)))
-  else:
-      await client.change_presence(activity=discord.Game(random.choice(playing)))
+
+  await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="!ajuda"))
+  
+  if logtime2.hour==00:    
+    guild = client.get_guild(803098749823221810)
+    comandos={}
+    names = []
+    for member in guild.members:
+      x = member.id
+      names.append(x)
+  
+    for n in names:
+      comandos[n]=0
+  
+    jsonString = json.dumps(comandos)
+    jsonFile = open("comandos.json", "w")
+    jsonFile.write(jsonString)
+    jsonFile.close()
+  
+
+  
+
 
       
 keep_alive()
-client.run(TOKEN)
+try:
+  client.run(TOKEN)
+  print("logging")
+except:
+  os.system("kill 1")
+  print("failed to log-killed container")
